@@ -1,3 +1,7 @@
+NAMA : Muhammad Nasih
+KELAS : TI3H
+NIM : 2341720009
+
 Praktikum 1: Menerapkan Control Flows ("if/else")
 ![alt text](img/1.png)
 Langkah 2:
