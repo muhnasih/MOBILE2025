@@ -1,8 +1,7 @@
-import 'dart:async';
+iimport 'dart:async';                    // untuk Completer
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:http/http.dart' as http;
-
+import 'package:http/http.dart' as http; // untuk http.get
+import 'screens/navigation_first.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -13,15 +12,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Future Demo',
+      title: 'Navigation Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const FuturePage(),
+      // LANGKAH 6: Ganti home ke NavigationFirst
+      home: const NavigationFirst(),
     );
   }
 }
+
+// === KODE LAMA TETAP ADA (Future, HTTP, Completer, dll) ===
+// (Agar tidak hilang saat praktikum sebelumnya)
 
 class FuturePage extends StatefulWidget {
   const FuturePage({super.key});
@@ -33,7 +36,6 @@ class FuturePage extends StatefulWidget {
 class _FuturePageState extends State<FuturePage> {
   String result = '';
 
-  // ✅ Completer
   late Completer<int> completer;
 
   Future<int> getNumber() {
@@ -47,7 +49,6 @@ class _FuturePageState extends State<FuturePage> {
     completer.complete(42);
   }
 
-  // ✅ API Call (kode lama tetap ada)
   Future<Response> getData() async {
     const authority = 'www.googleapis.com';
     const path = '/books/v1/volumes/junbDwAAQBAJ';
@@ -55,7 +56,6 @@ class _FuturePageState extends State<FuturePage> {
     return http.get(url);
   }
 
-  // ✅ Async return methods
   Future<int> returnOneAsync() async {
     await Future.delayed(const Duration(seconds: 3));
     return 1;
@@ -71,12 +71,47 @@ class _FuturePageState extends State<FuturePage> {
     return 3;
   }
 
-  // ✅ Count method
   Future<String> count() async {
     int one = await returnOneAsync();
     int two = await returnTwoAsync();
     int three = await returnThreeAsync();
     return '$one, $two, $three';
+  }
+
+  void returnFG() {
+    final futures = Future.wait<int>([
+      returnOneAsync(),
+      returnTwoAsync(),
+      returnThreeAsync(),
+    ]);
+
+    futures.then((List<int> values) {
+      int total = values.reduce((a, b) => a + b);
+      setState(() {
+        result = total.toString();
+      });
+    }).catchError((e) {
+      setState(() {
+        result = 'An error occurred';
+      });
+    });
+  }
+
+  Future returnError() async {
+    await Future.delayed(const Duration(seconds: 2));
+    throw Exception('Something terrible happened!');
+  }
+
+  Future handleError() async {
+    try {
+      await returnError();
+    } catch (error) {
+      setState(() {
+        result = error.toString();
+      });
+    } finally {
+      print('Complete');
+    }
   }
 
   @override
@@ -92,32 +127,14 @@ class _FuturePageState extends State<FuturePage> {
             ElevatedButton(
               child: const Text('GO!'),
               onPressed: () {
-                // ✅ Comment kode sebelumnya
-                /*
-                setState(() {});
-                getData().then((value) {
-                  result = value.body.toString().substring(0, 450);
-                  setState(() {});
-                }).catchError((_) {
-                  result = 'An error occurred';
-                  setState(() {});
-                });
-                */
-
-                // ✅ Gunakan Completer → getNumber()
-                setState(() {
-                  result = "Processing...";
-                });
-
-                getNumber().then((value) {
-                  setState(() {
-                    result = value.toString(); // Output: "42"
-                  });
-                });
+                handleError();
               },
             ),
             const Spacer(),
-            Text(result, style: const TextStyle(fontSize: 20)),
+            Text(
+              result,
+              style: const TextStyle(fontSize: 20),
+            ),
             const Spacer(),
             const CircularProgressIndicator(),
             const Spacer(),
