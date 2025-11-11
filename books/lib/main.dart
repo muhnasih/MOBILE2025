@@ -1,7 +1,9 @@
-iimport 'dart:async';                    // untuk Completer
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // untuk http.get
-import 'screens/navigation_first.dart';
+import 'package:http/http.dart' as http;
+import 'navigation_first.dart';
+import 'navigation_dialog.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -12,19 +14,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Navigation Demo',
+      title: 'Books - MUHAMMAD NASIH',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      // LANGKAH 6: Ganti home ke NavigationFirst
-      home: const NavigationFirst(),
+      home: const NavigationDialogScreen(), // ganti jika mau NavigationFirst()
+      // home: const NavigationFirst(),
     );
   }
 }
 
-// === KODE LAMA TETAP ADA (Future, HTTP, Completer, dll) ===
-// (Agar tidak hilang saat praktikum sebelumnya)
+// =========================================================
+// HALAMAN FUTURE / LATIHAN ASYNC & ERROR HANDLING
+// (masih tetap disimpan untuk praktikum Anda 👇)
+// =========================================================
 
 class FuturePage extends StatefulWidget {
   const FuturePage({super.key});
@@ -35,6 +39,7 @@ class FuturePage extends StatefulWidget {
 
 class _FuturePageState extends State<FuturePage> {
   String result = '';
+  bool loading = false;
 
   late Completer<int> completer;
 
@@ -49,7 +54,7 @@ class _FuturePageState extends State<FuturePage> {
     completer.complete(42);
   }
 
-  Future<Response> getData() async {
+  Future<http.Response> getData() async {
     const authority = 'www.googleapis.com';
     const path = '/books/v1/volumes/junbDwAAQBAJ';
     Uri url = Uri.https(authority, path);
@@ -71,30 +76,26 @@ class _FuturePageState extends State<FuturePage> {
     return 3;
   }
 
-  Future<String> count() async {
-    int one = await returnOneAsync();
-    int two = await returnTwoAsync();
-    int three = await returnThreeAsync();
-    return '$one, $two, $three';
-  }
-
   void returnFG() {
-    final futures = Future.wait<int>([
+    setState(() {
+      loading = true;
+      result = 'Menghitung...';
+    });
+
+    Future.wait<int>([
       returnOneAsync(),
       returnTwoAsync(),
       returnThreeAsync(),
-    ]);
-
-    futures.then((List<int> values) {
+    ]).then((values) {
       int total = values.reduce((a, b) => a + b);
       setState(() {
-        result = total.toString();
+        result = 'Total: $total';
       });
     }).catchError((e) {
       setState(() {
-        result = 'An error occurred';
+        result = 'Terjadi error: $e';
       });
-    });
+    }).whenComplete(() => setState(() => loading = false));
   }
 
   Future returnError() async {
@@ -103,13 +104,24 @@ class _FuturePageState extends State<FuturePage> {
   }
 
   Future handleError() async {
+    setState(() {
+      loading = true;
+      result = 'Menangani error...';
+    });
+
     try {
       await returnError();
+      setState(() {
+        result = 'Success';
+      });
     } catch (error) {
       setState(() {
         result = error.toString();
       });
     } finally {
+      setState(() {
+        loading = false;
+      });
       print('Complete');
     }
   }
@@ -118,25 +130,49 @@ class _FuturePageState extends State<FuturePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Back from the Future'),
+        title: const Text('Back from the Future - MUHAMMAD NASIH'),
       ),
       body: Center(
         child: Column(
           children: [
             const Spacer(),
+
             ElevatedButton(
-              child: const Text('GO!'),
+              onPressed: returnFG,
+              child: const Text('GO! (Future.wait)'),
+            ),
+
+            const SizedBox(height: 16),
+
+            ElevatedButton(
               onPressed: () {
-                handleError();
+                setState(() {
+                  loading = true;
+                  result = 'Menjalankan returnError()...';
+                });
+
+                returnError()
+                    .then((_) => setState(() => result = 'Success'))
+                    .catchError((e) => setState(() => result = e.toString()))
+                    .whenComplete(() => setState(() => loading = false));
               },
+              child: const Text('Uji Error (.catchError)'),
             ),
-            const Spacer(),
-            Text(
-              result,
-              style: const TextStyle(fontSize: 20),
+
+            const SizedBox(height: 16),
+
+            ElevatedButton(
+              onPressed: handleError,
+              child: const Text('Uji Error (try-catch)'),
             ),
+
             const Spacer(),
-            const CircularProgressIndicator(),
+            if (loading) const CircularProgressIndicator(),
+            if (!loading)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SelectableText(result),
+              ),
             const Spacer(),
           ],
         ),

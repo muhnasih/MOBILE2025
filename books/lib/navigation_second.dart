@@ -1,3 +1,5 @@
+// Lokasi file: lib/navigation_second.dart
+
 import 'package:flutter/material.dart';
 
 class NavigationSecond extends StatefulWidget {
@@ -8,39 +10,41 @@ class NavigationSecond extends StatefulWidget {
 }
 
 class _NavigationSecondState extends State<NavigationSecond> {
-  Color color = Colors.grey.shade400;
-
   @override
   Widget build(BuildContext context) {
+    // Variabel 'color' dari gambar Anda tidak diperlukan sebagai
+    // state di level ini.
+    // Kita bisa langsung mengirimkan warnanya saat 'pop'.
+
     return Scaffold(
-      backgroundColor: color,
       appBar: AppBar(
-        // TAMBAHKAN NAMA PANGGILAN ANDA
-        title: const Text('Navigation Second Screen - Nasih'),
+        // Menambahkan nama Anda sesuai Soal 15
+        title: const Text('Navigation Second Screen (by Naditya)'),
       ),
       body: Center(
         child: Column(
+          // Menggunakan 'spaceEvenly' seperti di gambar Anda
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
               child: const Text('Red'),
               onPressed: () {
-                color = Colors.red.shade700;
-                Navigator.pop(context, color);
+                // Langsung kirim data warna kembali ke layar pertama
+                Navigator.pop(context, Colors.red.shade700);
               },
             ),
             ElevatedButton(
               child: const Text('Green'),
               onPressed: () {
-                color = Colors.green.shade700;
-                Navigator.pop(context, color);
+                // Langsung kirim data warna kembali ke layar pertama
+                Navigator.pop(context, Colors.green.shade700);
               },
             ),
             ElevatedButton(
               child: const Text('Blue'),
               onPressed: () {
-                color = Colors.blue.shade700;
-                Navigator.pop(context, color);
+                // Langsung kirim data warna kembali ke layar pertama
+                Navigator.pop(context, Colors.blue.shade700);
               },
             ),
           ],

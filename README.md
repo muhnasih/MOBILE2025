@@ -194,3 +194,15 @@ Soal 15
 Tambahkan nama panggilan Anda pada tiap properti title sebagai identitas pekerjaan Anda.
 Silakan ganti dengan warna tema favorit Anda.
 ![alt text](img/11.png)
+
+Soal 16
+Cobalah klik setiap button, apa yang terjadi ? Mengapa demikian ?
+Gantilah 3 warna pada langkah 5 dengan warna favorit Anda!
+Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 16".
+![alt text](img/12.png)
+
+Soal 17
+Cobalah klik setiap button, apa yang terjadi ? Mengapa demikian ?
+Gantilah 3 warna pada langkah 3 dengan warna favorit Anda!
+Capture hasil praktikum Anda berupa GIF dan lampirkan di README. Lalu lakukan commit dengan pesan "W11: Soal 17".
+![alt text](img/13.png)
