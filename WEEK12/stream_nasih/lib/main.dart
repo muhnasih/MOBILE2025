@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:math';
+
+// Pastikan file stream.dart ada di folder yang sama
+// import 'stream.dart';   // kalau pakai file terpisah
 
 void main() {
   runApp(const MyApp());
@@ -7,116 +12,155 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Stream - Muhammad Nasih',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        primarySwatch: Colors.teal,
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const StreamHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class StreamHomePage extends StatefulWidget {
+  const StreamHomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<StreamHomePage> createState() => _StreamHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _StreamHomePageState extends State<StreamHomePage> {
+  // Langkah 1: Variabel yang diminta di gambar
+  late StreamSubscription subscription;
+  late StreamSubscription subscription2;
+  String values = '';
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+  late StreamController<int> numberStreamController;
+  late NumberStream numberStream;
+  late StreamTransformer<int, int> transformer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    numberStream = NumberStream();
+    numberStreamController = numberStream.controller;
+
+    // Langkah 4: Jadikan stream sebagai Broadcast Stream
+    // (harus dilakukan SEBELUM ada listener)
+    Stream<int> broadcastStream = numberStreamController.stream.asBroadcastStream();
+
+    // Transformer: kalikan 10 & tangani error
+    transformer = StreamTransformer<int, int>.fromHandlers(
+      handleData: (value, sink) {
+        sink.add(value * 10);
+      },
+      handleError: (error, stackTrace, sink) {
+        sink.add(-1);
+      },
+      handleDone: (sink) => sink.close(),
+    );
+
+    // Terapkan transformer ke broadcast stream
+    Stream<int> stream = broadcastStream.transform(transformer);
+
+    // Langkah 2: Dua subscription EXACTLY seperti di gambar
+    subscription = stream.listen((event) {
+      setState(() {
+        values += '$event - ';
+      });
     });
+
+    subscription2 = stream.listen((event) {
+      setState(() {
+        values += '$event - ';
+      });
+    });
+
+    // Optional: tangani error agar tidak crash
+    subscription.onError((e) => setState(() => values += 'Error! - '));
+    subscription2.onError((e) => setState(() => values += 'Error! - '));
+  }
+
+  void addRandomNumber() {
+    Random random = Random();
+    int myNum = random.nextInt(10); // 0-9
+    numberStream.addNumberToSink(myNum);
+
+    // Untuk test error, uncomment baris berikut:
+    // numberStream.addError();
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    subscription2.cancel();
+    numberStreamController.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('Stream - Muhammad Nasih'),
+        backgroundColor: Colors.teal,
+        foregroundColor: Colors.white,
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: SizedBox(
+        width: double.infinity,
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Langkah 5: Tampilkan teks values persis seperti di gambar
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              values.isEmpty ? 'Tekan tombol untuk memulai' : values,
+              style: const TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal,
+              ),
+              textAlign: TextAlign.center,
+            ),
+
+            ElevatedButton(
+              onPressed: addRandomNumber,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                textStyle: const TextStyle(fontSize: 18),
+              ),
+              child: const Text('New Random Number'),
+            ),
+
+            ElevatedButton(
+              onPressed: () => numberStream.addError(),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('Trigger Error (Test)'),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+class NumberStream {
+  final StreamController<int> controller = StreamController<int>();
+
+  void addNumberToSink(int number) {
+    controller.sink.add(number);
+  }
+
+  void addError() {
+    controller.sink.addError('Error sengaja dipicu untuk testing!');
+  }
+
+  void close() {
+    controller.close();
   }
 }
