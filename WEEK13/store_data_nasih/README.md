@@ -14,3 +14,8 @@ Lakukan commit hasil jawaban Soal 2 dengan pesan "W13: Jawaban Soal 3"
 Soal 4
 Capture hasil running aplikasi Anda, kemudian impor ke laporan praktikum Anda!
 Lalu lakukan commit dengan pesan "W13: Jawaban Soal 4".
+
+Soal 5
+Jelaskan maksud kode lebih safe dan maintainable!
+Capture hasil praktikum Anda dan lampirkan di README.
+Lalu lakukan commit dengan pesan "W13: Jawaban Soal 5".
