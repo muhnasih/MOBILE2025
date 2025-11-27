@@ -1,16 +1,12 @@
-# store_data_nasih
+Soal 1
+Tambahkan nama panggilan Anda pada title app sebagai identitas hasil pekerjaan Anda.
+Gantilah warna tema aplikasi sesuai kesukaan Anda.
+![alt text](img/1.png)
 
-A new Flutter project.
+Soal 2
+Masukkan hasil capture layar ke laporan praktikum Anda.
+Lakukan commit hasil jawaban Soal 2 dengan pesan "W13: Jawaban Soal 2"
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Soal 3
+Masukkan hasil capture layar ke laporan praktikum Anda.
+Lakukan commit hasil jawaban Soal 2 dengan pesan "W13: Jawaban Soal 3"
