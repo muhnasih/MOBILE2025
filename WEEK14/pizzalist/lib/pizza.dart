@@ -1,31 +1,37 @@
 class Pizza {
-  final String pizzaName;
-  final String description;
-  final double price;
+  int? id;
+  String pizzaName;
+  String description;
+  double price;
+  String imageUrl;
 
   Pizza({
-    required this.pizzaName,
-    required this.description,
-    required this.price,
+    this.id,
+    this.pizzaName = "",
+    this.description = "",
+    this.price = 0.0,
+    this.imageUrl = "",
   });
 
-  // Factory constructor untuk membuat objek Pizza dari JSON
   factory Pizza.fromJson(Map<String, dynamic> json) {
     return Pizza(
+      id: json['id'],
       pizzaName: json['pizzaName'] ?? '',
       description: json['description'] ?? '',
       price: (json['price'] is int)
           ? (json['price'] as int).toDouble()
           : (json['price'] ?? 0.0),
+      imageUrl: json['imageUrl'] ?? '',
     );
   }
 
-  // Convert kembali ke JSON jika dibutuhkan
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'pizzaName': pizzaName,
       'description': description,
       'price': price,
+      'imageUrl': imageUrl,
     };
   }
 }

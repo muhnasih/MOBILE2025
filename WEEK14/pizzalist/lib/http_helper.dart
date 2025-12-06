@@ -1,36 +1,48 @@
-import 'dart:io';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'pizza.dart';
 
 class HttpHelper {
-  // -------------------------------------------
-  // 🔵 SINGLETON
-  // -------------------------------------------
   static final HttpHelper _httpHelper = HttpHelper._internal();
   HttpHelper._internal();
-
   factory HttpHelper() {
     return _httpHelper;
   }
-  // -------------------------------------------
 
-  final String authority = '02z2g.mocklab.io';
-  final String path = 'pizzalist';
+  final String authority = 'pizzaserver.herokuapp.com';
 
-  Future<List<Pizza>> getPizzaList() async {
-    final Uri url = Uri.https(authority, path);
-    final http.Response result = await http.get(url);
+  // -----------------------------
+  // GET LIST PIZZAS
+  // -----------------------------
+  Future<List<Pizza>> getPizzas() async {
+    const path = '/pizzalist';
+    Uri url = Uri.https(authority, path);
 
-    if (result.statusCode == HttpStatus.ok) {
-      final jsonResponse = json.decode(result.body);
+    http.Response result = await http.get(url);
 
-      List<Pizza> pizzas =
-          jsonResponse.map<Pizza>((i) => Pizza.fromJson(i)).toList();
-
-      return pizzas;
+    if (result.statusCode == 200) {
+      List<dynamic> data = json.decode(result.body);
+      return data.map((e) => Pizza.fromJson(e)).toList();
     } else {
       return [];
     }
+  }
+
+  // -----------------------------
+  // POST PIZZA
+  // -----------------------------
+  Future<String> postPizza(Pizza pizza) async {
+    const postPath = '/pizza';
+
+    String post = json.encode(pizza.toJson());
+    Uri url = Uri.https(authority, postPath);
+
+    http.Response r = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: post,
+    );
+
+    return r.body;
   }
 }

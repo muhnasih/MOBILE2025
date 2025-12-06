@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pizza.dart';
 import 'http_helper.dart';
+import 'pizza_detail.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter JSON - Nasih', // ← Tambah nama panggilan
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange), 
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
         // ← Warna tema diganti sesuai kesukaan
         useMaterial3: true,
       ),
@@ -33,7 +34,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  
   Future<List<Pizza>> callPizzas() async {
     HttpHelper helper = HttpHelper();
     List<Pizza> pizzas = await helper.getPizzaList();
@@ -44,12 +44,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title), // ← menampilkan title yang sudah ada nama Anda
+        title: Text(
+          widget.title,
+        ), // ← menampilkan title yang sudah ada nama Anda
       ),
       body: FutureBuilder(
         future: callPizzas(),
         builder: (BuildContext context, AsyncSnapshot<List<Pizza>> snapshot) {
-          
           if (snapshot.hasError) {
             return const Center(child: Text('Something went wrong'));
           }
@@ -65,9 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
               return ListTile(
                 title: Text(pizza.pizzaName),
-                subtitle: Text(
-                  "${pizza.description} - € ${pizza.price}",
-                ),
+                subtitle: Text("${pizza.description} - € ${pizza.price}"),
               );
             },
           );
