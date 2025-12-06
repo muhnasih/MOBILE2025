@@ -19,3 +19,7 @@ Soal 5
 Jelaskan maksud kode lebih safe dan maintainable!
 Capture hasil praktikum Anda dan lampirkan di README.
 Lalu lakukan commit dengan pesan "W13: Jawaban Soal 5".
+
+Soal 6
+Capture hasil praktikum Anda berupa GIF dan lampirkan di README.
+Lalu lakukan commit dengan pesan "W13: Jawaban Soal 6".
